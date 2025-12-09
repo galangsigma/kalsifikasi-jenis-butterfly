@@ -22,6 +22,7 @@
               dark: "#0f172a",
               accent: "#38bdf8", // Sky Blue
               success: "#34d399", // Emerald
+              failure: "#d63124", // Emerald
             },
           },
         },
@@ -336,30 +337,46 @@
               <div
                 class="glass rounded-xl p-6 border-l-4 border-brand-success bg-gradient-to-r from-emerald-900/20 to-transparent">
                 <img id="predictedImage" class="rounded-lg mb-4 shadow-md" src="" alt="">
-                <div class="flex flex-col md:flex-row items-center justify-between gap-6">
 
-                  <div>
+                <div id="failed">
+                  <div class="flex flex-col items-center justify-between gap-6">
                     <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1">
                       Hasil Prediksi
                     </p>
-                    <h3 id="predictionResult" class="text-3xl font-black text-white">
-                      <!-- FILL WITH JS -->
-                    </h3>
-                    <p class="text-brand-success text-sm font-medium mt-1 flex items-center gap-1">
-                      <span class="material-symbols-rounded text-sm">verified</span>
-                      Teridentifikasi Valid
+
+                    <p class="text-brand-failure text-sm font-medium mt-1 flex items-center gap-1">
+                      <span class="material-symbols-rounded text-sm">verified_off</span>
+                      Identifikasi Gagal
                     </p>
                   </div>
+                </div>
 
-                  <div class="w-full md:w-1/2">
-                    <div class="flex justify-between text-sm mb-2">
-                      <span class="text-slate-300">Tingkat Keyakinan (Confidence)</span>
-                      <span id="confidenceText"
-                        class="font-bold high:text-brand-accent mid:text-yellow-300 low:text-red-500"></span>
+                <div id="success">
+                  <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div>
+                      <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1">
+                        Hasil Prediksi
+                      </p>
+                      <h3 id="predictionResult" class="text-3xl font-black text-white">
+                        <!-- FILL WITH JS -->
+                      </h3>
+                      <p class="text-brand-success text-sm font-medium mt-1 flex items-center gap-1">
+                        <span class="material-symbols-rounded text-sm">verified</span>
+                        Teridentifikasi Valid
+                      </p>
                     </div>
-                    <div class="w-full bg-slate-700 rounded-full h-3 overflow-hidden">
-                      <!-- SET WIDTH WITH JS -->
-                      <div id="confidenceBar" class="bg-brand-accent h-full rounded-full transition-all duration-1000">
+
+                    <div class="w-full md:w-1/2">
+                      <div class="flex justify-between text-sm mb-2">
+                        <span class="text-slate-300">Tingkat Keyakinan (Confidence)</span>
+                        <span id="confidenceText"
+                          class="font-bold high:text-brand-accent mid:text-yellow-300 low:text-red-500"></span>
+                      </div>
+                      <div class="w-full bg-slate-700 rounded-full h-3 overflow-hidden">
+                        <!-- SET WIDTH WITH JS -->
+                        <div id="confidenceBar"
+                          class="bg-brand-accent h-full rounded-full transition-all duration-1000">
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -394,6 +411,8 @@
     const prediction = document.getElementById("predictionResult");
     const confidence = document.getElementById("confidenceText");
     const confidenceBar = document.getElementById("confidenceBar");
+    const failed = document.getElementById("failed");
+    const success = document.getElementById("success");
 
     fileInput.addEventListener("change", function (e) {
       const file = e.target.files[0];
@@ -426,10 +445,19 @@
 
         resultCard.classList.remove("hidden");
 
-        prediction.innerText = data["prediction"]
-        confidence.innerText = data["confidence"] + "%"
-        confidenceBar.style.width = data["confidence"] + "%"
-        predictedImage.src = data["img_path"]
+        console.log(data["confidence"])
+        if (data["confidence"] < 50) {
+          success.classList.add("hidden");
+          failed.classList.remove("hidden");
+        } else {
+          success.classList.remove("hidden");
+          failed.classList.add("hidden");
+
+          prediction.innerText = data["prediction"]
+          confidence.innerText = data["confidence"] + "%"
+          confidenceBar.style.width = data["confidence"] + "%"
+          predictedImage.src = data["img_path"]
+        }
       })
     });
   </script>
